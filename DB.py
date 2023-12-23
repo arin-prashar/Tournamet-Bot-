@@ -31,17 +31,26 @@ def insert(guild_id:int,discord_id:int,discord_name:str,ign:str,uid:int)->str:
 def delete(guild_id:int,discord_id:int)->str:
     #delete the user data from the database
     collection=db['Tournament']
-    collection[f'{guild_id}'].delete_one({'discord_id':discord_id})
-    return 'Deleted'
+    try:
+        collection[f'{guild_id}'].delete_one({'discord_id':discord_id})
+        return 'Deleted'
+    except:
+        return 'Error'
 
 def find(guild_id:int,discord_id:int)->str:
     #find the user data from the database
     collection=db['Tournament']
-    data=collection[f'{guild_id}'].find_one({'discord_id':discord_id})
-    return data
+    try:
+        data=collection[f'{guild_id}'].find_one({'discord_id':discord_id})
+        return data
+    except:
+        return 'Error'
 
 def list(guild_id:int)->List:
     #list all the users from the database
     collection=db['Tournament']
-    data=collection[f'{guild_id}'].find()
-    return data
+    try:
+        data=collection[f'{guild_id}'].find()
+        return data
+    except:
+        return 'Error'
