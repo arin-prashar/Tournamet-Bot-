@@ -16,7 +16,7 @@ bot.remove_command('help')
 async def on_ready():
     print('Bot is ready.')
     print("Logged in as: " + bot.user.name + "\n")
-    bot.activity = discord.Activity(type=discord.ActivityType.watching, name="You")
+    bot.activity = discord.Activity(type=discord.ActivityType.playing, name="With at Spectral Eclipse")
     await bot.change_presence(activity=bot.activity)
 
 
@@ -38,27 +38,19 @@ async def on_raw_reaction_add(payload):
     if payload.channel_id==1100772553724792935:
         if payload.emoji.name=='🎮':
             guild=bot.get_guild(payload.guild_id)
-            role=guild.get_role(rle)
-            await payload.member.send('Do you want to register for the tournament? (yes/no)')
-            option=await bot.wait_for('message')
-            if option.content=='no':
-                return
+            role=get(guild.roles,id=rle)
+            def check(m):
+                return m.author==payload.member and m.channel==payload.member.dm_channel
             await payload.member.send('Enter your Ingame name')
-            msg=await bot.wait_for('message')
+            msg=await bot.wait_for('message',check=check)
             ign=msg.content
             await payload.member.send('Enter your User ID')
-            while True:
-                msg=await bot.wait_for('message')
-                try:
-                    uid=int(msg.content)
-                    break
-                except:
-                    await payload.member.send('Invalid User ID')
-                    await payload.member.send('Please Send UID again')
-                DB.insert(payload.guild_id,payload.member.id,payload.member.name,ign,uid)
-                await payload.member.add_roles(role)
-                slot-=1
-                return
+            msg=await bot.wait_for('message',check=check)
+            uid=int(msg.content)
+
+            DB.insert(payload.guild_id,payload.member.id,payload.member.name,ign,uid)
+            await payload.member.add_roles(role)
+            await payload.member.send('You have been registered for the tournament')
 
 @bot.command()
 async def slots(ctx,n:int):
