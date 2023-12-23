@@ -48,7 +48,15 @@ async def on_raw_reaction_add(payload):
             msg=await bot.wait_for('message',check=check)
             uid=int(msg.content)
 
-            DB.insert(payload.guild_id,payload.member.id,payload.member.name,ign,uid)
+            res=DB.insert(payload.guild_id,payload.member.id,payload.member.name,ign,uid)
+            if res=='Already exists':
+                await payload.member.send('You are already registered for the tournament')
+                return
+            elif res=='Error':
+                await payload.member.send('Error occured')
+                return
+            elif res=='Inserted':
+                slot-=1
             await payload.member.add_roles(role)
             await payload.member.send('You have been registered for the tournament')
 
@@ -72,6 +80,7 @@ async def add(ctx,mem:discord.Member,ign:str,uid:int):
 async def remove(ctx,mem:discord.Member):
     #remove a user from the tournament
     DB.delete(ctx.guild.id,mem.id)
+    
     await ctx.send('Removed')
 
 @bot.command()
@@ -102,14 +111,14 @@ async def update(ctx,mem:discord.Member,ign:str,uid:int):
 async def help(ctx):
     #help
     embed=discord.Embed(title='Commands',description='List of commands',color=0x00ff00)
-    embed.add_field(name='!slots',value='Set the number of slots in the tournament',inline=False)
-    embed.add_field(name='!add',value='Add a user to the tournament',inline=False)
-    embed.add_field(name='!remove',value='Remove a user from the tournament',inline=False)
-    embed.add_field(name='!find',value='Find a user in the tournament',inline=False)
-    embed.add_field(name='!list',value='List all the users in the tournament',inline=False)
+    embed.add_field(name='!rr <role>',value='Reaction role',inline=False)
+    embed.add_field(name='!slots <number>',value='Set the number of slots',inline=False)
+    embed.add_field(name='!add <member> <ign> <uid>',value='Add a member to the tournament',inline=False)
+    embed.add_field(name='!remove <member>',value='Remove a member from the tournament',inline=False)
+    embed.add_field(name='!find <member>',value='Find a member in the tournament',inline=False)
+    embed.add_field(name='!list',value='List all the members in the tournament',inline=False)
     embed.add_field(name='!clear',value='Clear the tournament',inline=False)
-    embed.add_field(name='!update',value='Update the user data',inline=False)
-    embed.add_field(name='!rr',value='Reaction role',inline=False)
+    embed.add_field(name='!update <member> <ign> <uid>',value='Update the member data',inline=False)
     await ctx.send(embed=embed)
 
 bot.run(os.getenv('TOKEN'))
