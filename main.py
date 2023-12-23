@@ -30,6 +30,8 @@ async def register(ctx):
     await ctx.author.send("Thank you for registering!")
     await ctx.author.send("Your Ingame name is: " + name.content)
     await ctx.author.send("Your User ID is: " + uid.content)
+    await ctx.author.send("dsicord userid is :" + str(ctx.author.id))
+    
     # insert(name.content, uid.content)
 
 bot.run(os.getenv('TOKEN'))
