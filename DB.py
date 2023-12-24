@@ -58,3 +58,11 @@ def list(guild_id:int)->List:
     except:
         return 'Error'
 
+def clear(guild_id:int)->str:
+    #clear the database
+    collection=db['Tournament']
+    try:
+        collection[f'{guild_id}'].drop()
+        return 'Cleared'
+    except:
+        return 'Error'

@@ -57,6 +57,20 @@ async def on_raw_reaction_add(payload):
                 slot-=1
             await payload.member.add_roles(role)
             await payload.member.send('You have been registered for the tournament')
+            await log(payload)
+
+async def log(payload):
+    # reaction role
+        guild=bot.get_guild(payload.guild_id)
+        member=guild.get_member(payload.user_id)
+        ign=DB.find(payload.guild_id,payload.user_id)['ign']
+        uid=DB.find(payload.guild_id,payload.user_id)['uid']
+        msg=f'''```json
+Discord ID: {member.id}
+Discord Name: {member.name}
+Ingame Name: {ign}
+User ID: {uid}```'''
+        await bot.get_channel(1188017123595919400).send(msg)
 
 @bot.command()
 async def slots(ctx,n:int):
