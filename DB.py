@@ -50,7 +50,11 @@ def list(guild_id:int)->List:
     #list all the users from the database
     collection=db['Tournament']
     try:
+        x=[]
         data=collection[f'{guild_id}'].find()
-        return data
+        for i in data:
+            x.append(i)
+        return x
     except:
         return 'Error'
+

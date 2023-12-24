@@ -9,7 +9,7 @@ load_dotenv()
 
 bot=commands.Bot(command_prefix='!',intents=discord.Intents.all())
 slot=40
-rle=1188099693549465732
+rle=1187975519959003166
 bot.remove_command('help')
 
 @bot.event
@@ -35,10 +35,11 @@ async def on_raw_reaction_add(payload):
     global slot,rle
     if payload.member.bot:
         return
-    if payload.channel_id==1100772553724792935:
+    if payload.channel_id==1187975459959492618:
         if payload.emoji.name=='🎮':
             guild=bot.get_guild(payload.guild_id)
             role=get(guild.roles,id=rle)
+            print(role)
             def check(m):
                 return m.author==payload.member and m.channel==payload.member.dm_channel
             await payload.member.send('Enter your Ingame name')
@@ -49,12 +50,11 @@ async def on_raw_reaction_add(payload):
             uid=int(msg.content)
 
             res=DB.insert(payload.guild_id,payload.member.id,payload.member.name,ign,uid)
+            print(payload.member)
             if res=='Already exists':
-                await payload.member.send('You are already registered for the tournament')
-                return
+                await payload.member.send('Already registered for the tournament')
             elif res=='Error':
                 await payload.member.send('Error occured')
-                return
             elif res=='Inserted':
                 slot-=1
             await payload.member.add_roles(role)
@@ -80,7 +80,6 @@ async def add(ctx,mem:discord.Member,ign:str,uid:int):
 async def remove(ctx,mem:discord.Member):
     #remove a user from the tournament
     DB.delete(ctx.guild.id,mem.id)
-    
     await ctx.send('Removed')
 
 @bot.command()
