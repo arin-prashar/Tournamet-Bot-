@@ -80,6 +80,7 @@ async def add(ctx,mem:discord.Member,ign:str,uid:int):
 async def remove(ctx,mem:discord.Member):
     #remove a user from the tournament
     DB.delete(ctx.guild.id,mem.id)
+    await mem.remove_roles(get(ctx.guild.roles,id=rle))
     await ctx.send('Removed')
 
 @bot.command()
