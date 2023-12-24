@@ -39,7 +39,6 @@ async def on_raw_reaction_add(payload):
         if payload.emoji.name=='🎮':
             guild=bot.get_guild(payload.guild_id)
             role=get(guild.roles,id=rle)
-            print(role)
             def check(m):
                 return m.author==payload.member and m.channel==payload.member.dm_channel
             await payload.member.send('Enter your Ingame name')
@@ -50,7 +49,6 @@ async def on_raw_reaction_add(payload):
             uid=int(msg.content)
 
             res=DB.insert(payload.guild_id,payload.member.id,payload.member.name,ign,uid)
-            print(payload.member)
             if res=='Already exists':
                 await payload.member.send('Already registered for the tournament')
             elif res=='Error':
