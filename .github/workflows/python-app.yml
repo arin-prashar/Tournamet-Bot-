@@ -18,11 +18,13 @@ jobs:
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: 3.12
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Run main.py --t ${{secrets.TOKEN}}
+    - name: Run main.py
       run: |
-        python main.py
+        # get token from github secrets
+        echo ${{ secrets.TOKEN }}
+        python main.py --t ${{ secrets.TOKEN }}
