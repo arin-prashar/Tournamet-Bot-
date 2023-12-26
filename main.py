@@ -3,9 +3,17 @@ from discord.ext import commands
 from discord.utils import get
 import os
 from dotenv import load_dotenv
-import DB
+import argparse
 
+# 2 args ,first is dbpass, second is token
+parser = argparse.ArgumentParser()
+parser.add_argument("TOKEN", help="Bot token")
+args = parser.parse_args()
+os.environ['TOKEN'] = args.TOKEN
+
+import DB 
 load_dotenv()
+
 
 bot=commands.Bot(command_prefix='!',intents=discord.Intents.all())
 slot=40

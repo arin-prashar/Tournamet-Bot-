@@ -21,10 +21,8 @@ jobs:
         python-version: 3.8
     - name: Install dependencies
       run: |
-        # my ip address with subnet mask
-        ip addr show eth0 | grep inet | awk '{ print $2; }' | sed 's/\/.*$//' 
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Run main.py
+    - name: Run main.py ${{secrets.TOKEN}}
       run: |
         python main.py
