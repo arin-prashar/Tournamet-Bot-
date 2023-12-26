@@ -7,6 +7,7 @@ from typing import List
 load_dotenv()
 
 passwd=os.environ.get('DB_PASS')
+print(passwd)
 uri=f'mongodb+srv://dkg:{passwd}@cluster0.zehbxvy.mongodb.net/?retryWrites=true&w=majority'
 db = MongoClient(uri)
 
