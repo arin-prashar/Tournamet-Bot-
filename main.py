@@ -24,6 +24,12 @@ async def on_ready():
 @bot.command()
 async def rr(ctx,role:discord.Role):
     # reaction role
+    if ctx.author.bot:
+        return
+    # admin only
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.send('Only admins can use this command')
+        return
     global rle
     rle=role.id
     msg = await ctx.send('React with 🎮 to register for tournament')
@@ -75,47 +81,110 @@ User ID: {uid}```'''
 @bot.command()
 async def slots(ctx,n:int):
     #slots
+    if ctx.author.bot:
+        return
+    # admin only
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.send('Only admins can use this command')
+        return
     global slots
     slot:int=n
 
 @bot.command()
 async def add(ctx,mem:discord.Member,ign:str,uid:int):
     #add a user to the tournament
+    if ctx.author.bot:
+        return
+    # admin only
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.send('Only admins can use this command')
+        return
     global slot
     if slot==0:
         await ctx.send('Slots are full')
         return
     DB.insert(ctx.guild.id,mem.id,mem.name,ign,uid)
+    slot-=1
     await ctx.send('Added')
 
 @bot.command()
 async def remove(ctx,mem:discord.Member):
     #remove a user from the tournament
+    if ctx.author.bot:
+        return
+    # admin only
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.send('Only admins can use this command')
+        return
     DB.delete(ctx.guild.id,mem.id)
     await mem.remove_roles(get(ctx.guild.roles,id=rle))
+    slot+=1
     await ctx.send('Removed')
 
 @bot.command()
 async def find(ctx,mem:discord.Member):
     #find a user in the tournament
     data=DB.find(ctx.guild.id,mem.id)
-    await ctx.send(data)
+    if data=='Not found':
+        await ctx.send('Not found')
+        return
+    # formatting the data    
+    embed=discord.Embed(title='User Data',description='',color=0x00ff00)
+    embed.set_thumbnail(url=mem.avatar)
+    embed.set_footer(text=f'Requested by {ctx.author.name}',icon_url=ctx.author.avatar)
+    embed.add_field(name='Discord Name',value=data['discord_name'],inline=False)
+    embed.add_field(name='Discord ID',value=data['discord_id'],inline=False)
+    embed.add_field(name='Ingame Name',value=data['ign'],inline=False)
+    embed.add_field(name='User ID',value=data['uid'],inline=False)
+    await ctx.send(embed=embed)
 
 @bot.command()
 async def list(ctx):
     #list all the users in the tournament
+    if ctx.author.bot:
+        return
+    # admin only
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.send('Only admins can use this command')
+        return
     data=DB.list(ctx.guild.id)
-    await ctx.send(data)
+    if data=='Empty':
+        await ctx.send('Empty')
+        return
+    # formatting the data
+    for i in data:
+        embed=discord.Embed(title='User Data',description='',color=0x00ff00)
+        embed.set_thumbnail(url=ctx.guild.get_member(i['discord_id']).avatar)
+        embed.set_footer(text=f'Requested by {ctx.author.name}',icon_url=ctx.author.avatar)
+        embed.add_field(name='Discord Name',value=i['discord_name'],inline=False)
+        embed.add_field(name='Discord ID',value=i['discord_id'],inline=False)
+        embed.add_field(name='Ingame Name',value=i['ign'],inline=False)
+        embed.add_field(name='User ID',value=i['uid'],inline=False)
+        await ctx.send(embed=embed)
 
 @bot.command()
 async def clear(ctx):
     #clear the tournament
+    if ctx.author.bot:
+        return
+    # admin only
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.send('Only admins can use this command')
+        return
+    global slot
+    slot=40
     DB.clear(ctx.guild.id)
     await ctx.send('Cleared')
 
 @bot.command()
 async def update(ctx,mem:discord.Member,ign:str,uid:int):
     #update the user data
+    if ctx.author.bot:
+        return
+    # admin only
+    if not ctx.author.guild_permissions.administrator:
+        await ctx.send('Only admins can use this command')
+        return
     DB.update(ctx.guild.id,mem.id,ign,uid)
     await ctx.send('Updated')
 

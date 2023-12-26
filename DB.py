@@ -42,7 +42,10 @@ def find(guild_id:int,discord_id:int)->str:
     collection=db['Tournament']
     try:
         data=collection[f'{guild_id}'].find_one({'discord_id':discord_id})
-        return data
+        if data:
+            return data
+        else:
+            return 'Not found'
     except:
         return 'Error'
 
@@ -54,7 +57,10 @@ def list(guild_id:int)->List:
         data=collection[f'{guild_id}'].find()
         for i in data:
             x.append(i)
-        return x
+        if x==[]:
+            return 'Empty'
+        else:
+            return x
     except:
         return 'Error'
 
