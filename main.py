@@ -7,7 +7,8 @@ import argparse
 
 # 2 args ,first is dbpass, second is token
 parser = argparse.ArgumentParser()
-parser.add_argument("TOKEN", help="Bot token")
+# no var argument
+parser.add_argument('--t', type=str, help='Discord bot token', required=True)
 args = parser.parse_args()
 os.environ['TOKEN'] = args.TOKEN
 
