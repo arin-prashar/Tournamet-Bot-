@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.8
+    - name: Set up Python 3.12
       uses: actions/setup-python@v2
       with:
         python-version: 3.12
@@ -26,5 +26,4 @@ jobs:
     - name: Run main.py
       run: |
         # get token from github secrets
-        echo ${{ secrets.TOKEN }}
         python main.py --t ${{ secrets.TOKEN }}
