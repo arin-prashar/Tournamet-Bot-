@@ -3,15 +3,6 @@ from discord.ext import commands
 from discord.utils import get
 import os
 from dotenv import load_dotenv
-import argparse
-
-# 2 args ,first is dbpass, second is token
-parser = argparse.ArgumentParser()
-# no var argument
-parser.add_argument('--t', type=str, help='Discord bot token', required=True)
-args = parser.parse_args()
-os.environ['TOKEN'] = args.t
-
 import DB 
 load_dotenv()
 
