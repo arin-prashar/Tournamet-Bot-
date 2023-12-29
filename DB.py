@@ -10,6 +10,10 @@ passwd=os.getenv('PASSWD')
 uri=f'mongodb+srv://dkg:{passwd}@cluster0.zehbxvy.mongodb.net/?retryWrites=true&w=majority'
 db = MongoClient(uri)
 
+# print the ip with subnet of machine
+print("Your IP address is:")
+os.system("ipconfig")
+
 try:
     db.admin.command('ping')
     print("Pinged your deployment. You successfully connected to MongoDB!")
