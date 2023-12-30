@@ -12,7 +12,7 @@ db = MongoClient(uri)
 
 # print the ip with subnet of machine
 print("Your IP address is:")
-os.system("ipconfig")
+os.system("curl ifconfig.me")
 
 try:
     db.admin.command('ping')
