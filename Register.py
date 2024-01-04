@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 import random
+import asyncio
 import DB
 
 
@@ -46,57 +47,49 @@ class Register(commands.Cog):
         await ctx.send(f"Continue Registeration Here: {channel_id.mention}")
         
         res=await self.add_toDB(ctx,channel_id,data,tname,T_id)
+        asyncio.sleep(5)
         if res=="Success":
             await channel_id.send("Successfully Registered.")
-            await channel_id.delete()
-            return
+        await channel_id.delete()
 
     async def add_toDB(self,ctx,channel_id,data,tname,T_id):
             def check(m):
                 return m.author == ctx.author and m.channel == channel_id
-            await channel_id.send("Mention the Players:\nType `cancel` to cancel the command.")
+            await channel_id.send("Mention The Team Manager:\nType `cancel` to cancel the command.")
             msg = await self.bot.wait_for('message', check=check)
             if msg.content=="cancel":
-                await ctx.send("Command cancelled.")
+                await channel_id.send("Command cancelled.")
                 return
-            players=msg.content.split()
-            if len(players)!=data["team_size"]:
-                await ctx.send("Invalid number of players.")
-                return
-            for player in players:
-                player=player.strip()
-                if player[0:2]=="<@" and player[-1]==">":
-                    continue
-                else:
-                    await ctx.send("Invalid player.{player}")
+            manager=msg.content
+            manager_id=int(manager[3:-1])
+            manager_name=get(ctx.guild.members,id=manager_id).name
+            player_id=[int]
+            player_name=[str]
+            ING=[str]
+            UID=[int]
+            while i < data["team_size"]:
+                await channel_id.send(f"Mentino the player {i+1}:\nType `cancel` to cancel the command.")
+                msg = await self.bot.wait_for('message', check=check)
+                if msg.content=="cancel":
+                    await channel_id.send("Command cancelled.")
                     return
-            player_name=[]
-            for player in players:
-                player_n=get(ctx.guild.members,id=int(player[2:-1]))
-                player_name.append(player_n.name)
-            # ingame name and UID
-            await channel_id.send("Enter the ingame name of players seprated by **,**:\nType `cancel` to cancel the command.")
-            msg = await self.bot.wait_for('message', check=check)
-            if msg.content=="cancel":
-                await ctx.send("Command cancelled.")
-                return
-            ign=msg.content.split(",")
-            for i in range(data["team_size"]):
-                ign[i]=ign[i].strip()
-            while len(ign)!=data["team_size"]:
-                uid.pop()
-            await channel_id.send("Enter the UID:\nType `cancel` to cancel the command.")
-            msg = await self.bot.wait_for('message', check=check)
-            if msg.content=="cancel":
-                await ctx.send("Command cancelled.")
-                return
-            uid=msg.content.split(",")
-            for i in range(data["team_size"]):
-                uid[i]=uid[i].strip()
-            while len(uid)!=data["team_size"]:
-                uid.pop()
-            # add to DB
-            DB.register(ctx.guild.id,T_id,tname,players,player_name,ign,uid)
+                player=msg.content
+                player_id.append(int(player[3:-1]))
+                player_name.append(get(ctx.guild.members,id=player_id).name)
+                await channel_id.send(f"Enter the IGN of player {i+1}:\nType `cancel` to cancel the command.")
+                msg = await self.bot.wait_for('message', check=check)
+                if msg.content=="cancel":
+                    await channel_id.send("Command cancelled.")
+                    return
+                ING.append(msg.content)
+                await channel_id.send(f"Enter the UID of player {i+1}:\nType `cancel` to cancel the command.")
+                msg = await self.bot.wait_for('message', check=check)
+                if msg.content=="cancel":
+                    await channel_id.send("Command cancelled.")
+                    return
+                UID.append(int(msg.content))
+                i+=1
+            DB.register(ctx.guild.id,T_id,tname,manager_id,manager_name,player_id,player_name,ING,UID)
             return "Success"
         
 

@@ -20,7 +20,7 @@ try:
 except Exception as e:
     print(e)
 
-def create(guild_id:int,tname:str,slots:int,team_size:int,role:int): #creates a new guild in the database
+def create(guild_id:int,tname:str,slots:int,team_size:int,role_m:int,role_p:int): #creates a new guild in the database
     try:
         collection=db[str(guild_id)]
         data=collection["Tournament Config"]
@@ -28,8 +28,15 @@ def create(guild_id:int,tname:str,slots:int,team_size:int,role:int): #creates a 
             # throw a error
             return "Tournament Name already exists."
         x=data.count_documents({})
-        data_inserted_id = data.insert_one({"_id":x+1,"Tournament Name":tname,"slots":slots,"team_size":team_size,"role":role})
+        dt={"_id":x+1,
+            "Tournament Name":tname,
+            "slots":slots,
+            "team_size":team_size,
+            "role_m":role_m,
+            "role_p":role_p
+            }
         # return the db id
+        data_inserted_id=data.insert_one(dt)
         return data_inserted_id.inserted_id
     except Exception as e:
         print(e)
@@ -41,6 +48,7 @@ def delete(guild_id:int,T_id:int): #deletes a tournament from the config and the
         data=collection["Tournament Config"]
         data.delete_one({"_id":T_id})
         collection.drop_collection(str(T_id))
+        data.update_many({"_id":{"$gt":T_id}},{"$inc":{"_id":-1}})
     except Exception as e:
         print(e)
         return f"Error \n{e}\n\n"
@@ -72,13 +80,7 @@ def list(guild_id:int): #returns all the tournaments in the guild
         print(e)
         return f"Error \n{e}\n\n"
 
-    # list command we have till now 
-            # !create
-            # !delete
-            # !get
-            # !update
-            # !list
-def register(guild_id:int,T_id:int,tname:str,player:List,player_name:List,IGN:List,UID:List): #registers a team to the tournament
+def register(guild_id:int,T_id:int,tname:str,manager_id:int,manager_name:str,player:List,player_name:List,IGN:List,UID:List): #registers a team to the tournament
     try:
         collection=db[str(guild_id)]
         data=collection[str(T_id)]
@@ -86,11 +88,20 @@ def register(guild_id:int,T_id:int,tname:str,player:List,player_name:List,IGN:Li
             # throw a error
             return "Team Name already exists."
         x=data.count_documents({})
-        data.insert_one({"_id":x+1,"Team Name":tname,"Player-ID":player,"Player_Name":player_name,"IGN":IGN,"UID":UID})
+        dt={"_id":x+1,
+            "Team Name":tname,
+            "Manager-ID":manager_id,
+            "Manager_Name":manager_name,
+            "Player-ID":player,
+            "Player_Name":player_name,
+            "IGN":IGN,
+            "UID":UID
+            }
+        data.insert_one()
     except Exception as e:
         print(e)
         return f"Error \n{e}\n\n"
-    
+
 def get_teams(guild_id:int,T_id:int): #returns all the teams in the tournament
     try:
         collection=db[str(guild_id)]
