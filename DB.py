@@ -53,3 +53,81 @@ def get(guild_id:int,T_id:int): #returns the tournament config
     except Exception as e:
         print(e)
         return f"Error \n{e}\n\n"
+    
+def update(guild_id:int,T_id:int,slots:int,team_size:int,role:int): #updates the tournament config
+    try:
+        collection=db[str(guild_id)]
+        data=collection["Tournament Config"]
+        data.update_one({"_id":T_id},{"$set":{"slots":slots,"team_size":team_size,"role":role}})
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+    
+def list(guild_id:int): #returns all the tournaments in the guild
+    try:
+        collection=db[str(guild_id)]
+        data=collection["Tournament Config"]
+        return data.find()
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+
+    # list command we have till now 
+            # !create
+            # !delete
+            # !get
+            # !update
+            # !list
+def register(guild_id:int,T_id:int,tname:str,player:List,player_name:List,IGN:List,UID:List): #registers a team to the tournament
+    try:
+        collection=db[str(guild_id)]
+        data=collection[str(T_id)]
+        if tname in data.distinct("Team Name"):
+            # throw a error
+            return "Team Name already exists."
+        x=data.count_documents({})
+        data.insert_one({"_id":x+1,"Team Name":tname,"Player-ID":player,"Player_Name":player_name,"IGN":IGN,"UID":UID})
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+
+
+def add_team(guild_id:int,T_id:int,tname:str): #adds a team to the tournament
+    try:
+        collection=db[str(guild_id)]
+        data=collection[str(T_id)]
+        if tname in data.distinct("Team Name"):
+            # throw a error
+            return "Team Name already exists."
+        x=data.count_documents({})
+        data.insert_one({"_id":x+1,"Team Name":tname,"Players":[]})
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+    
+def remove_team(guild_id:int,T_id:int,tname:str): #removes a team from the tournament
+    try:
+        collection=db[str(guild_id)]
+        data=collection[str(T_id)]
+        data.delete_one({"Team Name":tname})
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+    
+def get_teams(guild_id:int,T_id:int): #returns all the teams in the tournament
+    try:
+        collection=db[str(guild_id)]
+        data=collection[str(T_id)]
+        return data.find()
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+    
+def get_team(guild_id:int,T_id:int,tname:str): #returns a team from the tournament
+    try:
+        collection=db[str(guild_id)]
+        data=collection[str(T_id)]
+        return data.find_one({"Team Name":tname})
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"

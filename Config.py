@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 import random
-import DB as DB
+import DB
 
 
 class Config(commands.Cog):
@@ -148,14 +148,14 @@ class Config(commands.Cog):
         if msg.content=="cancel":
             await ctx.send("Command cancelled.")
             return
-        slots=msg.content
+        slots=int(msg.content)
 
         await ctx.send("Enter the new team size:\nType `cancel` to cancel the command.")
         msg = await self.bot.wait_for('message', check=check)
         if msg.content=="cancel":
             await ctx.send("Command cancelled.")
             return
-        team_size=msg.content
+        team_size=int(msg.content)
         while True:
             await ctx.send("Ping the role that the **user** gets on successful Registeration:\nType `cancel` to cancel the command.")
             msg = await self.bot.wait_for('message', check=check)

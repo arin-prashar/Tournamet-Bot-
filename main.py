@@ -15,7 +15,7 @@ async def on_ready():
     print("Logged in as: " + bot.user.name + "\n")
     bot.activity = discord.Activity(type=discord.ActivityType.playing, name="With at Spectral Eclipse")
     for cog in cogs:
-        await bot.load_extension("Cogs."+cog)
+        await bot.load_extension(cog)
         print(f"Loaded {cog}")
     await bot.change_presence(activity=bot.activity)
 

@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.utils import get
-import DB as DB
+import DB 
 
 class Seed(commands.Cog):
     def  __init__(self,bot):
@@ -9,9 +9,8 @@ class Seed(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    def seed(ctx):
-        pass
-
+    async def seed(self,ctx):
+        await ctx.send("Seeding")
 
 
 async def setup(bot):
