@@ -16,63 +16,40 @@ os.system("curl ifconfig.me")
 
 try:
     db.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
+    print("\nPinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
     print(e)
 
-def insert(guild_id:int,discord_id:int,discord_name:str,ign:str,uid:int)->str:
-    #insert the user data into the database
-    collection=db['Tournament']
+def create(guild_id:int,tname:str,slots:int,team_size:int,role:int): #creates a new guild in the database
     try:
-        if collection[f'{guild_id}'].find_one({'discord_id':discord_id}):
-            return 'Already exists'
-        collection[f'{guild_id}'].insert_one({'discord_id':discord_id,'discord_name':discord_name,'ign':ign,'uid':uid})
-        return 'Inserted'
-    except:
-        return 'Error'
-        
-
-def delete(guild_id:int,discord_id:int)->str:
-    #delete the user data from the database
-    collection=db['Tournament']
+        collection=db[str(guild_id)]
+        data=collection["Tournament Config"]
+        if tname in data.distinct("Tournament Name"):
+            # throw a error
+            return "Tournament Name already exists."
+        x=data.count_documents({})
+        data_inserted_id = data.insert_one({"_id":x+1,"Tournament Name":tname,"slots":slots,"team_size":team_size,"role":role})
+        # return the db id
+        return data_inserted_id.inserted_id
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+    
+def delete(guild_id:int,T_id:int): #deletes a tournament from the config and the tournamnent db
     try:
-        collection[f'{guild_id}'].delete_one({'discord_id':discord_id})
-        return 'Deleted'
-    except:
-        return 'Error'
-
-def find(guild_id:int,discord_id:int)->str:
-    #find the user data from the database
-    collection=db['Tournament']
+        collection=db[str(guild_id)]
+        data=collection["Tournament Config"]
+        data.delete_one({"_id":T_id})
+        collection.drop_collection(str(T_id))
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+    
+def get(guild_id:int,T_id:int): #returns the tournament config
     try:
-        data=collection[f'{guild_id}'].find_one({'discord_id':discord_id})
-        if data:
-            return data
-        else:
-            return 'Not found'
-    except:
-        return 'Error'
-
-def list(guild_id:int)->List:
-    #list all the users from the database
-    collection=db['Tournament']
-    try:
-        x=[]
-        data=collection[f'{guild_id}'].find()
-        for i in data:
-            x.append(i)
-        if x==[]:
-            return 'Empty'
-        else:
-            return x
-    except:
-        return 'Error'
-
-def clear(guild_id:int)->str:
-    #clear the database
-    collection=db['Tournament']
-    try:
-        collection[f'{guild_id}'].drop()
-        return 'Cleared'
-    except:
-        return 'Error'
+        collection=db[str(guild_id)]
+        data=collection["Tournament Config"]
+        return data.find_one({"_id":T_id})
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
