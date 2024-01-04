@@ -116,6 +116,27 @@ class Register(commands.Cog):
         auth_id="<@"+str(ctx.author.id)+">"
         if auth_id in data["Player-ID"]:
             await ctx.send("Team Registered.")
+        
+    @confirm.error
+    async def confirm_error(self,ctx,error):
+        if isinstance(error,commands.MissingPermissions):
+            await ctx.send("You do not have the required permissions.")
+        elif isinstance(error,commands.MissingRequiredArgument):
+            await ctx.send("Please specify a tournament ID.")
+
+    
+    @commands.command()
+    async def unregister(self,ctx,T_id:int,tname:str):
+        data=DB.get_team(ctx.guild.id,T_id,tname)
+        if data==None:
+            await ctx.send("Tournament not found.")
+            return
+        auth_id="<@"+str(ctx.author.id)+">"
+        if auth_id in data["Player-ID"]:
+            DB.unregister(ctx.guild.id,T_id,tname)
+            await ctx.send("Team Unregistered.")
+            return
+        await ctx.send("Team not found.")
 
 async def setup(bot):
     await bot.add_cog(Register(bot))

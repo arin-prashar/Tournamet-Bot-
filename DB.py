@@ -90,29 +90,6 @@ def register(guild_id:int,T_id:int,tname:str,player:List,player_name:List,IGN:Li
     except Exception as e:
         print(e)
         return f"Error \n{e}\n\n"
-
-
-def add_team(guild_id:int,T_id:int,tname:str): #adds a team to the tournament
-    try:
-        collection=db[str(guild_id)]
-        data=collection[str(T_id)]
-        if tname in data.distinct("Team Name"):
-            # throw a error
-            return "Team Name already exists."
-        x=data.count_documents({})
-        data.insert_one({"_id":x+1,"Team Name":tname,"Players":[]})
-    except Exception as e:
-        print(e)
-        return f"Error \n{e}\n\n"
-    
-def remove_team(guild_id:int,T_id:int,tname:str): #removes a team from the tournament
-    try:
-        collection=db[str(guild_id)]
-        data=collection[str(T_id)]
-        data.delete_one({"Team Name":tname})
-    except Exception as e:
-        print(e)
-        return f"Error \n{e}\n\n"
     
 def get_teams(guild_id:int,T_id:int): #returns all the teams in the tournament
     try:

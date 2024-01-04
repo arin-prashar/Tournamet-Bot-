@@ -22,7 +22,17 @@ async def on_ready():
 @bot.command()
 async def help(ctx):
     #help
-    embed=discord.Embed(title='Commands',description='List of commands',color=0x00ff00) 
+    embed=discord.Embed(title='Commands',description='List of commands',color=0x00ff00)
+    embed.add_field(name='!create',value='Creates a tournament.',inline=False)
+    embed.add_field(name='!delete',value='Deletes a tournament.',inline=False)
+    embed.add_field(name='!get',value='Gets a tournament.',inline=False)
+    embed.add_field(name='!update',value='Updates a tournament.',inline=False)
+    embed.add_field(name='!list',value='Lists all tournaments.',inline=False)
+    embed.add_field(name='!register',value='Registers a team.',inline=False)
+    embed.add_field(name='!seed',value='Seeds a tournament.',inline=False)
+    embed.add_field(name='!unregister',value='Unregisters a team.',inline=False)
+    embed.add_field(name='!confirm',value='Confirms Your entry.',inline=False)
+    embed.add_field(name='!help',value='Shows this message.',inline=False)
     await ctx.send(embed=embed)
 
 bot.run(os.getenv('TOKEN'))
