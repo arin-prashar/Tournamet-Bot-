@@ -6,8 +6,8 @@ from typing import List
 
 load_dotenv()
 
-passwd=os.getenv('PASSWD')
-uri=f'mongodb+srv://dkg:{passwd}@cluster0.zehbxvy.mongodb.net/?retryWrites=true&w=majority'
+# passwd=os.getenv('PASSWD')
+uri=os.getenv('uri')
 db = MongoClient(uri)
 
 # print the ip with subnet of machine
