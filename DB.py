@@ -6,7 +6,6 @@ from typing import List
 
 load_dotenv()
 
-# passwd=os.getenv('PASSWD')
 uri=os.getenv('uri')
 db = MongoClient(uri)
 
