@@ -5,6 +5,17 @@ import random
 import asyncio
 import DB
 
+class Register_Option_BTNS(discord.ui.View):
+    def __init(self):
+        super().__init__()
+
+    @discord.ui.button(label="Register",style=discord.ButtonStyle.green)
+    async def register(self,button:discord.ui.Button,interaction:discord.Interaction):
+        await interaction.response.send_message("Enter the tournament ID:\nType `cancel` to cancel the command.")
+
+    @discord.ui.button(label="Unregister",style=discord.ButtonStyle.red)
+    async def unregister(self,button:discord.ui.Button,interaction:discord.Interaction):
+        await interaction.response.send_message("Enter the tournament ID:\nType `cancel` to cancel the command.")
 
 class Register(commands.Cog):
     def __init__(self,bot):
@@ -130,6 +141,19 @@ class Register(commands.Cog):
             await ctx.send("Team Unregistered.")
             return
         await ctx.send("Team not found.")
+
+    @unregister.error
+    async def unregister_error(self,ctx,error):
+        if isinstance(error,commands.MissingPermissions):
+            await ctx.send("You do not have the required permissions.")
+        elif isinstance(error,commands.MissingRequiredArgument):
+            await ctx.send("Please specify a tournament ID.")
+
+    @commands.command()
+    async def test(self,ctx):
+        view=Register_Option_BTNS()
+        await ctx.send("Select an option",view=view)
+        await view.wait()
 
 async def setup(bot):
     await bot.add_cog(Register(bot))

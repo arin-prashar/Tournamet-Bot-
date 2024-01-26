@@ -19,6 +19,13 @@ async def on_ready():
         print(f"Loaded {cog}")
     await bot.change_presence(activity=bot.activity)
 
+
+@bot.command()
+async def rext(ctx):
+    for extension in cogs:
+        await bot.reload_extension(f'{extension}')
+    await ctx.send(f"reloaded {extension}")
+
 @bot.command()
 async def help(ctx):
     #help

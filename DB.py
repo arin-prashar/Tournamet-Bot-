@@ -9,10 +9,6 @@ load_dotenv()
 uri=os.getenv('uri')
 db = MongoClient(uri)
 
-# print the ip with subnet of machine
-print("Your IP address is:")
-os.system("curl ifconfig.me")
-
 try:
     db.admin.command('ping')
     print("\nPinged your deployment. You successfully connected to MongoDB!")
