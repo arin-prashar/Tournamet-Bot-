@@ -68,3 +68,70 @@ def update(guild_id:int,T_id:int,t_name:str,slots:int,team_size:int,role:int): #
         print(e)
         return f"Error \n{e}\n\n"
     
+
+def add_player(guild_id:int,T_id:int,discord_id:int): #adds a player to the tournament
+    try:
+        collection=db[str(guild_id)]
+        data=collection[str(T_id)]
+        player=get_player(guild_id,discord_id)
+        data.insert_one({"_id":discord_id,"Discord Name":player["Discord Name"],"In Game Name":player["In Game Name"],"UID":player["UID"]})
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+    
+def remove_player(guild_id:int,T_id:int,discord_id:int): #removes a player from the tournament
+    try:
+        collection=db[str(guild_id)]
+        data=collection[str(T_id)]
+        data.delete_one({"_id":discord_id})
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+    
+def get_tourn_players(guild_id:int,T_id:int): #returns all the players in the tournament
+    try:
+        collection=db[str(guild_id)]
+        data=collection[str(T_id)]
+        players=data.find({})
+        return players
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+    
+def register_player(guild_id:int,DID:int,DName:str,ING:str,UID:int):
+    try:
+        collection=db[str(guild_id)]
+        data=collection["Players"]
+        data.insert_one({"_id":DID,"UID":UID,"Discord Name":DName,"In Game Name":ING})
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+    
+def get_players(guild_id:int):
+    try:
+        collection=db[str(guild_id)]
+        data=collection["Players"]
+        players=data.find({})
+        return players
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+    
+def unregister_player(guild_id:int,DID:int):
+    try:
+        collection=db[str(guild_id)]
+        data=collection["Players"]
+        data.delete_one({"_id":DID})
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
+    
+def get_player(guild_id:int,DID:int):
+    try:
+        collection=db[str(guild_id)]
+        data=collection["Players"]
+        player=data.find_one({"_id":DID})
+        return player
+    except Exception as e:
+        print(e)
+        return f"Error \n{e}\n\n"
