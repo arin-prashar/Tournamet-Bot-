@@ -116,17 +116,17 @@ class Config(commands.Cog):
             await ctx.send("Command cancelled.")
             return
         T_id=msg.content
+        T_id=int(T_id)
         data=DB.get(ctx.guild.id,T_id)
-        print(data)
         if data==None:
             await ctx.send("Tournament not found.")
             return
         embed=discord.Embed(title="Tournament Config",description="Tournament Config",color=0x00ff00)
-        embed.add_field(name="Tournament Name",value=data["Tournament Name"],inline=False) # type: ignore
-        embed.add_field(name="Tournament ID",value=data["_id"],inline=False) # type: ignore
-        embed.add_field(name="Slots",value=data["slots"],inline=False) # type: ignore
-        embed.add_field(name="Team Size",value=data["team_size"],inline=False) # type: ignore
-        embed.add_field(name="Role",value=get(ctx.guild.roles,id=data["role"]).mention,inline=False) # type: ignore
+        embed.add_field(name="Tournament Name",value=data["Tournament Name"],inline=False) 
+        embed.add_field(name="Tournament ID",value=data["_id"],inline=False) 
+        embed.add_field(name="Slots",value=data["slots"],inline=False) 
+        embed.add_field(name="Team Size",value=data["team_size"],inline=False) 
+        await ctx.send("Tournament Config")
         await ctx.send(embed=embed)
 
     @get_config.error
