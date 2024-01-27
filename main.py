@@ -3,9 +3,12 @@ from discord.ext import commands
 from discord.utils import get
 import os
 from dotenv import load_dotenv
+import logging
 load_dotenv()
 
-bot=commands.Bot(command_prefix='!',intents=discord.Intents.all())
+handler=logging.FileHandler(filename='discord.log',encoding='utf-8',mode='w')
+
+bot=commands.Bot(command_prefix='>>',intents=discord.Intents.all())
 bot.remove_command('help')
 
 cogs=['Config','Register','Seed']
@@ -24,7 +27,7 @@ async def on_ready():
 async def rext(ctx):
     for extension in cogs:
         await bot.reload_extension(f'{extension}')
-    await ctx.send(f"reloaded {extension}")
+        await ctx.send(f"reloaded {extension}")
 
 @bot.command()
 async def help(ctx):
@@ -42,4 +45,4 @@ async def help(ctx):
     embed.add_field(name='!help',value='Shows this message.',inline=False)
     await ctx.send(embed=embed)
 
-bot.run(os.getenv('TOKEN'))
+bot.run( os.getenv('TOKEN') ,log_handler=handler,reconnect=True,log_level=logging.INFO) # type: ignore

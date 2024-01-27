@@ -107,7 +107,7 @@ class Config(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def get(self,ctx):
+    async def get_config(self,ctx):
         await ctx.send("Enter the tournament ID:\nType `cancel` to cancel the command.")
         def check(m):
             return m.author == ctx.author and m.channel == ctx.channel
@@ -117,18 +117,19 @@ class Config(commands.Cog):
             return
         T_id=msg.content
         data=DB.get(ctx.guild.id,T_id)
+        print(data)
         if data==None:
             await ctx.send("Tournament not found.")
             return
         embed=discord.Embed(title="Tournament Config",description="Tournament Config",color=0x00ff00)
-        embed.add_field(name="Tournament Name",value=data["Tournament Name"],inline=False)
-        embed.add_field(name="Tournament ID",value=data["_id"],inline=False)
-        embed.add_field(name="Slots",value=data["slots"],inline=False)
-        embed.add_field(name="Team Size",value=data["team_size"],inline=False)
-        embed.add_field(name="Role",value=get(ctx.guild.roles,id=data["role"]).mention,inline=False)
+        embed.add_field(name="Tournament Name",value=data["Tournament Name"],inline=False) # type: ignore
+        embed.add_field(name="Tournament ID",value=data["_id"],inline=False) # type: ignore
+        embed.add_field(name="Slots",value=data["slots"],inline=False) # type: ignore
+        embed.add_field(name="Team Size",value=data["team_size"],inline=False) # type: ignore
+        embed.add_field(name="Role",value=get(ctx.guild.roles,id=data["role"]).mention,inline=False) # type: ignore
         await ctx.send(embed=embed)
 
-    @get.error
+    @get_config.error
     async def get_error(self,ctx,error):
         if isinstance(error,commands.MissingRequiredArgument):
             await ctx.send("Please specify a tournament ID.")
@@ -190,28 +191,6 @@ class Config(commands.Cog):
             await ctx.send("Please specify a tournament ID.")
         elif isinstance(error,commands.MissingPermissions):
             await ctx.send("You do not have the required permissions.")
-
-    @commands.command()
-    @commands.has_permissions(administrator=True)
-    async def list(self,ctx):
-        data=DB.list(ctx.guild.id)
-        if data==None:
-            await ctx.send("No tournaments found.")
-            return
-        embed=discord.Embed(title="Tournament List",description="Tournament List",color=0x00ff00)
-        for i in data:
-            embed.add_field(name="Tournament Name",value=i["Tournament Name"],inline=False)
-            embed.add_field(name="Tournament ID",value=i["_id"],inline=False)
-            embed.add_field(name="Slots",value=i["slots"],inline=False)
-            embed.add_field(name="Team Size",value=i["team_size"],inline=False)
-            embed.add_field(name="Role",value=get(ctx.guild.roles,id=i["role"]).mention,inline=False)
-        await ctx.send(embed=embed)
-
-    @list.error
-    async def list_error(self,ctx,error):
-        if isinstance(error,commands.MissingPermissions):
-            await ctx.send("You do not have the required permissions.")
-
     # list command we have till now 
             # !create
             # !delete

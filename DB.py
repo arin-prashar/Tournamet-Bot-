@@ -1,8 +1,9 @@
+from ast import Dict
 import pymongo
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
-from typing import List
+from typing import List,Dict
 
 load_dotenv()
 
@@ -51,66 +52,19 @@ def delete(guild_id:int,T_id:int): #deletes a tournament from the config and the
 def get(guild_id:int,T_id:int): #returns the tournament config
     try:
         collection=db[str(guild_id)]
-        data=collection["Tournament Config"]
-        return data.find_one({"_id":T_id})
+        config=collection["Tournament Config"]
+        data=config.find_one({"_id":T_id})
+        return data
     except Exception as e:
         print(e)
         return f"Error \n{e}\n\n"
     
-def update(guild_id:int,T_id:int,slots:int,team_size:int,role:int): #updates the tournament config
+def update(guild_id:int,T_id:int,t_name:str,slots:int,team_size:int,role:int): #updates the tournament config
     try:
         collection=db[str(guild_id)]
         data=collection["Tournament Config"]
-        data.update_one({"_id":T_id},{"$set":{"slots":slots,"team_size":team_size,"role":role}})
+        data.update_one({"_id":T_id},{"$set":{"Tournament Name":t_name,"slots":slots,"team_size":team_size,"role":role} })
     except Exception as e:
         print(e)
         return f"Error \n{e}\n\n"
     
-def list(guild_id:int): #returns all the tournaments in the guild
-    try:
-        collection=db[str(guild_id)]
-        data=collection["Tournament Config"]
-        return data.find()
-    except Exception as e:
-        print(e)
-        return f"Error \n{e}\n\n"
-
-def register(guild_id:int,T_id:int,tname:str,manager_id:int,manager_name:str,player:List,player_name:List,IGN:List,UID:List): #registers a team to the tournament
-    try:
-        collection=db[str(guild_id)]
-        data=collection[str(T_id)]
-        if tname in data.distinct("Team Name"):
-            # throw a error
-            return "Team Name already exists."
-        x=data.count_documents({})
-        dt={"_id":x+1,
-            "Team Name":tname,
-            "Manager-ID":manager_id,
-            "Manager_Name":manager_name,
-            "Player-ID":player,
-            "Player_Name":player_name,
-            "IGN":IGN,
-            "UID":UID
-            }
-        data.insert_one()
-    except Exception as e:
-        print(e)
-        return f"Error \n{e}\n\n"
-
-def get_teams(guild_id:int,T_id:int): #returns all the teams in the tournament
-    try:
-        collection=db[str(guild_id)]
-        data=collection[str(T_id)]
-        return data.find()
-    except Exception as e:
-        print(e)
-        return f"Error \n{e}\n\n"
-    
-def get_team(guild_id:int,T_id:int,tname:str): #returns a team from the tournament
-    try:
-        collection=db[str(guild_id)]
-        data=collection[str(T_id)]
-        return data.find_one({"Team Name":tname})
-    except Exception as e:
-        print(e)
-        return f"Error \n{e}\n\n"
