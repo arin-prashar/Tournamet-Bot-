@@ -30,6 +30,11 @@ async def rext(ctx):
         await ctx.send(f"reloaded {extension}")
 
 @bot.command()
+async def relaod(ctx,extension):
+    await bot.reload_extension(f'{extension}')
+    await ctx.send(f"reloaded {extension}")
+
+@bot.command()
 async def help(ctx):
     #help
     embed=discord.Embed(title='Commands',description='List of commands',color=0x00ff00)
@@ -45,4 +50,4 @@ async def help(ctx):
     embed.add_field(name='!help',value='Shows this message.',inline=False)
     await ctx.send(embed=embed)
 
-bot.run( os.getenv('TOKEN') ,log_handler=handler,reconnect=True,log_level=logging.INFO) # type: ignore
+bot.run( os.getenv('TOKEN') ,log_handler=handler,reconnect=True,log_level=logging.DEBUG) # type: ignore
