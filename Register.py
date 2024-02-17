@@ -41,7 +41,6 @@ class Register(commands.Cog):
     async def open_registerations(self,ctx,TID:int):
         Buttons=Register_Option_Btns()
         data=DB.get(ctx.guild.id,TID)
-        print(data)
         if data==None:
             await ctx.send("Tournament not found.")
             return
